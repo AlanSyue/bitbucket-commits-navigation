@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Bitbucket Commit Navigation",
+  "version": "1.0",
+  "description": "A Chrome extension to navigate between commits on Bitbucket PRs",
+  "permissions": ["activeTab"],
+  "content_scripts": [
+    {
+      "matches": ["https://bitbucket.org/*/*/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ]
+}
