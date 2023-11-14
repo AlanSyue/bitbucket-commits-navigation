@@ -1,6 +1,6 @@
 const MIN_COMMIT_SIZE = 1;
 
-window.onload = function () {
+window.onload = async function () {
   const bar = createBar();
   const btnWrapper = createButtonWrapper(bar);
   const currentHref = window.location.href;
@@ -12,30 +12,13 @@ window.onload = function () {
       return;
     }
 
-    let commitLinks = [];
-    let commitIds = [];
+    const [repo, pull_request_id] = uriSlice;
 
-    let links = document.getElementsByTagName("a");
-
-    for (let i = 0; i < links.length; i++) {
-      const linkElement = links[i];
-      if (
-        linkElement.href.includes("/commits/") &&
-        linkElement.getAttribute("aria-label") &&
-        linkElement.getAttribute("aria-label").includes("Commit")
-      ) {
-        commitLinks.push(linkElement);
-
-        let parts = linkElement.href.split("/commits/");
-        if (
-          parts.length > 1 &&
-          !commitIds.includes(parts[1]) &&
-          parts[1] != ""
-        ) {
-          commitIds.push(parts[1]);
-        }
-      }
-    }
+    const response = await fetch(
+      `https://bitbucket.org/!api/2.0/repositories${repo}/pullrequests/${pull_request_id}/commits`
+    );
+    const data = await response.json();
+    const commitIds = data.values.map((obj) => obj.hash);
 
     if (commitIds.length > MIN_COMMIT_SIZE) {
       let button = document.createElement("button");
@@ -46,8 +29,11 @@ window.onload = function () {
       button.style.height = "30px";
       button.style.fontSize = "20px";
 
-      lastLink = commitLinks.pop();
-      openLink = lastLink.href + "?cids=" + commitIds.reverse().join(",");
+      const lastCommit = commitIds[commitIds.length - 1];
+      const lastCommitLink = `https://bitbucket.org${repo}/commits/${lastCommit}`;
+      const openLink =
+        lastCommitLink + "?cids=" + commitIds.reverse().join(",");
+
       button.onclick = function () {
         window.open(openLink, "_blank");
       };
