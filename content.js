@@ -96,7 +96,7 @@ const createBar = () => {
   bar.style.bottom = "0px";
   bar.style.left = "0px";
   bar.style.width = "100%";
-  bar.style.height = "5%";
+  bar.style.height = "7%";
   bar.style.backgroundColor = "black";
   bar.style.display = "hide";
   bar.style.justifyContent = "center";
